@@ -11,6 +11,9 @@
 
     # gui
     gtk3
+
+    # github cli
+    gh
   ];
 
 
