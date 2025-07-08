@@ -43,13 +43,13 @@
     gnumake
   ];
 
-  home.file.".config/nvim" = {
-    source = ./nvimFancy;
-    recursive = true;
-  };
-
   #home.file.".config/nvim" = {
-  #    source = ./baremetal_nvim;
-  #    recursive = true;
-  #  };
+  #  source = ./nvimFancy;
+  #  recursive = true;
+  #};
+
+  home.file.".config/nvim" = {
+      source = ./baremetal_nvim;
+      recursive = true;
+    };
 }
