@@ -14,6 +14,9 @@
 
     # github cli
     gh
+
+    # streaming
+    obs-studio
   ];
 
 
