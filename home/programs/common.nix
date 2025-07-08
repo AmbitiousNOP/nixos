@@ -17,6 +17,9 @@
 
     # streaming
     obs-studio
+
+    # apps
+    anki-bin
   ];
 
 
