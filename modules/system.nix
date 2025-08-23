@@ -4,6 +4,10 @@
   # Enable a specific unfree software to be installed 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "keymapp"
+    "nvidia-x11"
+    "nvidia-settings"
+    "nvidia-persistenced"
+    "obsidian"
   ];
 
   # Enable exerpimental features globally
@@ -44,11 +48,12 @@
 
   # Enable the X11 windowing system.
   # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = false;
+  services.xserver.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
-  #services.displayManager.sddm.enable = true;
-  #services.desktopManager.plasma6.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
   #services.xserver.xkb = {
@@ -79,15 +84,15 @@
   # services.xserver.libinput.enable = true;
 
   
-  security.pam.services.greetd.enableGnomeKeyring = true;
-  services.greetd = {
-  	enable = true;
-	settings = {
-		default_session = {
-			command = "${pkgs.greetd.tuigreet}/bin/tuigreet --cmd Hyprland";
-		};
-	};
-  };
+  #security.pam.services.greetd.enableGnomeKeyring = true;
+  #services.greetd = {
+  #	enable = true;
+  #	settings = {
+  #		default_session = {
+  #			command = "${pkgs.greetd.tuigreet}/bin/tuigreet --cmd Hyprland";
+  #		};
+  #	};
+  #};
 
   programs.zsh.enable = true;
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -107,7 +112,7 @@
 	zsh
   	vim 
   	wget
-	greetd.tuigreet
+	#greetd.tuigreet
 	wl-clipboard
 	libsForQt5.dolphin
 	tmux

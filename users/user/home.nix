@@ -9,6 +9,7 @@
     ../../home/rofi
     ../../home/shell
     ../../home/neovim
+    ../../home/helix
   ];
 
   programs.git = {

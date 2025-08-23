@@ -8,6 +8,7 @@
     #utils
     gcc
     libusb1
+    lshw
 
     # gui
     gtk3
@@ -20,6 +21,8 @@
 
     # apps
     anki-bin
+    #zed-editor
+    #helix
   ];
 
 
