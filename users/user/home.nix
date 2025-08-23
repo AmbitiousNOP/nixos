@@ -10,6 +10,7 @@
     ../../home/shell
     ../../home/neovim
     ../../home/helix
+    ../../home/vscodium
   ];
 
   programs.git = {
