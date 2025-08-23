@@ -8,12 +8,15 @@
       rust-lang.rust-analyzer
       arrterian.nix-env-selector
       teabyii.ayu
+      #ginfuru.ginfuru-better-solarized-dark-theme
+      oderwat.indent-rainbow
     ];
     userSettings = {
       "nixEnvSelector.useFlakes" = true;
       "rust-analyzer.hover.documentation.enable" = false;
       "workbench.colorTheme" = "Ayu Dark Bordered";
       "nixEnvSelector.packages" = [];
+      #"indentRainbow.indicatorStyle" = "light";
     };
   };
 }
