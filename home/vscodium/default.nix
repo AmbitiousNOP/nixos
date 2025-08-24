@@ -10,6 +10,7 @@
       teabyii.ayu
       #ginfuru.ginfuru-better-solarized-dark-theme
       oderwat.indent-rainbow
+      vscodevim.vim
     ];
     userSettings = {
       "nixEnvSelector.useFlakes" = true;
