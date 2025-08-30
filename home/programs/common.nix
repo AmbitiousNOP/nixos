@@ -16,6 +16,9 @@
     # github cli
     gh
 
+    # google cloud sdk
+    google-cloud-sdk
+
     # streaming
     obs-studio
 
