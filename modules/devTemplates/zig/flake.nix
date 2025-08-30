@@ -1,20 +1,31 @@
 {
-  description = "A Nix-flake-based Zig development environment";
+  description = "Zig dev env (master)";
 
-  inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.zig = {
+    url = "github:mitchellh/zig-overlay";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
 
-  outputs = inputs:
+  outputs = { self, nixpkgs, zig, ... }:
     let
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forEachSupportedSystem = f: inputs.nixpkgs.lib.genAttrs supportedSystems (system: f {
-        pkgs = import inputs.nixpkgs { inherit system; };
-      });
-    in
-    {
-      devShells = forEachSupportedSystem ({ pkgs }: {
+      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      forEachSystem = f: nixpkgs.lib.genAttrs systems (system:
+        f {
+          pkgs = import nixpkgs { inherit system; };
+          zigMaster = zig.packages.${system}.master;  # <- no overlay needed
+        }
+      );
+    in {
+      devShells = forEachSystem ({ pkgs, zigMaster }: {
         default = pkgs.mkShell {
-          packages = with pkgs; [ zig zls lldb ];
+          packages = [
+            zigMaster
+            pkgs.zls
+            pkgs.lldb
+          ];
         };
       });
     };
 }
+
