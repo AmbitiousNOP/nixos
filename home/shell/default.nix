@@ -11,6 +11,9 @@
       plugins = ["git"];
       theme = "robbyrussell";
     };
+  };
 
+  programs.ghostty = {
+    enable = true;
   };
 }

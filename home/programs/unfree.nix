@@ -1,6 +1,6 @@
 {pkgs, lib, ...}:{
   home.packages = with pkgs; [
-    keymapp
+    #keymapp
     wally-cli
     obsidian
   ];

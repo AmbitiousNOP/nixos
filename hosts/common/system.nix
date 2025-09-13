@@ -1,9 +1,8 @@
-{pkgs, lib, username, ... }:
+{config, pkgs, lib, username, hostname, ... }:
 
 {
   # Enable a specific unfree software to be installed 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "keymapp"
     "nvidia-x11"
     "nvidia-settings"
     "nvidia-persistenced"
@@ -16,12 +15,8 @@
   services.udev.enable = true;
   services.udev.packages = [ pkgs.zsa-udev-rules ];
 
-
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  networking.hostName = "laptop"; # Define your hostname.
+  networking.hostName = hostname;   
+  networking.networkmanager.enable = true;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -46,24 +41,6 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
-
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable = true;
-
-  # Configure keymap in X11
-  #services.xserver.xkb = {
-  #  layout = "us";
-  #  variant = "";
-  #};
-
-  # Enable CUPS to print documents.
-  #services.printing.enable = true;
-
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -72,27 +49,10 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-   #media-session.enable = true;
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
-
-  
-  #security.pam.services.greetd.enableGnomeKeyring = true;
-  #services.greetd = {
-  #	enable = true;
-  #	settings = {
-  #		default_session = {
-  #			command = "${pkgs.greetd.tuigreet}/bin/tuigreet --cmd Hyprland";
-  #		};
-  #	};
-  #};
 
   programs.zsh.enable = true;
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -116,6 +76,59 @@
 	wl-clipboard
 	libsForQt5.dolphin
 	tmux
+	adwaita-icon-theme
   ];
 
+  /*
+  specialisation = {
+    gnome.configuration = {
+      system.nixos.tags = [ "gnome" ];
+      services.xserver.enable = true;
+      services.xserver.displayManager.gdm.enable = true;
+      services.xserver.desktopManager.gnome.enable = true;
+
+      home-manager.users.${username}.imports = [
+	../../home/gnome/default.nix
+      ];
+    };
+
+    hyprland.configuration = {
+      system.nixos.tags = [ "hyprland" ];
+      home-manager.users.${username}.imports = [
+	../../home/hyprland/default.nix
+	../../home/waybar/default.nix
+      ];
+
+      programs.hyprland = {
+	enable = true;
+	withUWSM = true;
+	# set the flake package
+	#package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+        # make sure to also set the portal package, so that they are in sync
+	#portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+
+      };
+      services.greetd = {
+	enable = true;
+	settings = {
+	  default_session = {
+	    command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.hyprland}/bin/Hyprland";
+	    user = "greeter";
+	  };
+	};
+      };
+      environment.sessionVariables = {
+	XDG_SESSION_TYPE = "wayland";
+	NIXOS_OZONE_WL = "1";
+      };
+    };
+  };
+  */
+
+  services.xserver.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
+
+
+  system.stateVersion = "25.05";
 }

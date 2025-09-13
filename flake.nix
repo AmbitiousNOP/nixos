@@ -7,27 +7,25 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 	
-  outputs = inputs@{ self, nixpkgs, hyprland, home-manager,  ...}: {
+  outputs = inputs@{ self, nixpkgs, home-manager,  ...}: {
     nixosConfigurations = {
       laptop = let
         username = "user";
-        specialArgs = {inherit username;};
+	hostname = "laptop";
+        specialArgs = {
+	  inherit username;
+	  inherit hostname;
+	};
       in
         nixpkgs.lib.nixosSystem {
           inherit specialArgs;
           system = "x86_64-linux";
         
           modules = [
-            ./hosts/laptop/default.nix
+            ./hosts/laptop/p14s/default.nix
             ./users/${username}/nixos.nix
-	    hyprland.nixosModules.default
-	    { programs.hyprland.enable = true; }
             home-manager.nixosModules.home-manager{
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
