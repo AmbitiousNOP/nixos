@@ -20,9 +20,10 @@
   # "vendor" setting, in this case the thinkpad_acpi driver.
   # See https://hansdegoede.livejournal.com/27130.html
   # See https://lore.kernel.org/linux-acpi/20221105145258.12700-1-hdegoede@redhat.com/
-  boot.kernelParams = lib.mkIf (lib.versionOlder config.boot.kernelPackages.kernel.version "6.2") [
-    "acpi_backlight=native"
-  ];
+  #boot.kernelParams = lib.mkIf (lib.versionOlder config.boot.kernelPackages.kernel.version "6.2") [
+  #  "acpi_backlight=native"
+  #];
+  boot.kernelParams = [ "i915.force_probe=7d55" ];
 
   # Bootloader
   # see https://github.com/NixOS/nixpkgs/issues/69289
