@@ -11,7 +11,7 @@
     ../../home/neovim
     ../../home/helix
     ../../home/vscodium
-    ../../home/gnome
+    #../../home/gnome
   ];
 
   programs.git = {

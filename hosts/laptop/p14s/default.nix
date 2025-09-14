@@ -11,6 +11,7 @@
 
   imports = [
     ../.
+    ./hardware-configuration.nix
     ../../common/pc/ssd
     ../../common/system.nix
   ];
@@ -30,23 +31,5 @@
   boot.kernelPackages = lib.mkIf (lib.versionOlder pkgs.linux.version "5.2") pkgs.linuxPackages_latest;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/5de541ce-d74e-434b-808d-07c4a9497ee3";
-      fsType = "ext4";
-    };
-
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/298A-6C81";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-    };
-
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/19b2f757-2ad4-4a07-bbda-a59342413829"; }
-    ];
-
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-
 
 }
