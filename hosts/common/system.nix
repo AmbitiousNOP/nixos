@@ -76,7 +76,7 @@
 	wl-clipboard
 	libsForQt5.dolphin
 	tmux
-	adwaita-icon-theme
+	#adwaita-icon-theme
   ];
 
   
@@ -90,6 +90,25 @@
       home-manager.users.${username}.imports = [
 	../../home/gnome/default.nix
       ];
+
+      environment.gnome.excludePackages = with pkgs; [	
+	gnome-weather
+	gnome-photos
+	gnome-tour
+	gnome-maps
+	gnome-music
+	gnome-connections
+	gnome-characters
+	gnome-contacts
+	gnome-calendar
+	geary
+	epiphany
+	yelp
+      ];
+      environment.systemPackages = with pkgs; [
+	adwaita-icon-theme
+      ];
+
     };
 
     hyprland.configuration = {
