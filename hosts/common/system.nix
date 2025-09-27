@@ -74,7 +74,7 @@
   	wget
 	#greetd.tuigreet
 	wl-clipboard
-	libsForQt5.dolphin
+	#libsForQt5.dolphin
 	tmux
 	#adwaita-icon-theme
   ];
