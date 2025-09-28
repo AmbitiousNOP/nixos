@@ -71,7 +71,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     --  the definition of its *type*, not where it was *defined*.
     map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
-    local function client_supports_method(client,mehtod, bufnr)
+    local function client_supports_method(client,method, bufnr)
       if vim.fn.has 'nvim-0.11' == 1 then
 	return client:supports_method(method, bufnr)
       else
@@ -167,6 +167,7 @@ cmp.setup({
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local servers = {
   lua_ls = {
+    cmd = {'lua-language-server'},
     settings = {
       Lua = {
 	completion = {
@@ -176,33 +177,32 @@ local servers = {
     },
   },
   nixd = {
-    settings = {
-      nixd = {
-	formatting = {
-	  command = {"nixpkgs-fmt"},
-	},
-      },
-    },
+    --cmd = {'nixd'}
+    filetypes = {'nix'},
+    root_markers = {'.git'},
   },
-  vimls = {},
+  vimls = {
+    cmd = {'vim-language-server'},
+  },
+  gopls = {
+    cmd = {'gopls'},
+  },
 }
---[[
-local ensure_installed = vim.tbl_keys(servers or {})
-vim.list_extend(ensure_installed, {
-  'stylua',
-})
-]]--
 
-
-local lspconfig = require('lspconfig')
-for server_name, server_opts in pairs(servers) do 
-  lspconfig[server_name].setup(
-    vim.tbl_deep_extend('force', {
-      capabilities = capabilities,
-      }, server_opts or {})
-  )
+local function lsp_cmd_exists(cmd)
+  return vim.fn.executable(cmd) == 1
 end
-	'';
+
+
+for server_name, server_opts in pairs(servers) do 
+  local cmd = (server_opts and server_opts.cmd and server_opts.cmd[1]) or server_name
+  vim.lsp.config[server_name] = server_opts
+  if lsp_cmd_exists(cmd) then 
+    vim.lsp.enable(server_name)
+  end 
+end 
+
+    '';
   };
 
 }
