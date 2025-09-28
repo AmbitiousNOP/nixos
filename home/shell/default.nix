@@ -1,17 +1,54 @@
-{pkgs, ...}:
-{
+{config, pkgs, lib, ...}:
 
+let
+  customOhMyZshTheme = ''
+# Identify if in Nix Dev Shell 
+autoload -U colors && colors
+
+if [[ -n "$IN_NIX_SHELL" ]]; then
+  PROMPT="%(?:%{$fg_bold[green]%}%1{➜%} [NIX DEV  ]:%{''$fg_bold[red]%}%1{➜%} ) %{''$fg[cyan]%}%c%{''$reset_color%}"
+  PROMPT+=' ''$(git_prompt_info)'
+
+  ZSH_THEME_GIT_PROMPT_PREFIX="%{''$fg_bold[blue]%}git:(%{''$fg[red]%}"
+  ZSH_THEME_GIT_PROMPT_SUFFIX="%{''$reset_color%} "
+  ZSH_THEME_GIT_PROMPT_DIRTY="%{''$fg[blue]%}) %{''$fg[yellow]%}%1{✗%}"
+  ZSH_THEME_GIT_PROMPT_CLEAN="%{''$fg[blue]%})"
+else
+
+  PROMPT="%(?:%{''$fg_bold[green]%}%1{➜%}  :%{''$fg_bold[red]%}%1{➜%} ) %{''$fg[cyan]%}%c%{''$reset_color%}"
+  PROMPT+=' ''$(git_prompt_info)'
+
+  ZSH_THEME_GIT_PROMPT_PREFIX="%{''$fg_bold[blue]%}git:(%{''$fg[red]%}"
+  ZSH_THEME_GIT_PROMPT_SUFFIX="%{''$reset_color%} "
+  ZSH_THEME_GIT_PROMPT_DIRTY="%{''$fg[blue]%}) %{''$fg[yellow]%}%1{✗%}"
+  ZSH_THEME_GIT_PROMPT_CLEAN="%{''$fg[blue]%})"
+fi
+  '';
+
+  prependZshCustom = ''
+    export ZSH_CUSTOM="${config.home.homeDirectory}/.oh-my-zsh/custom"
+  '';
+in
+{
+  home.file.".oh-my-zsh/custom/themes/custom.zsh-theme".text = customOhMyZshTheme;
+  #home.file.".zshrc".text = ''
+  #  ${prependZshCustom}
+  #'';
   programs = {
     zsh = {
       enable = true;
       enableCompletion = true;
       #autosuggestions.enable = true;
       syntaxHighlighting.enable = true;
+      #setOptions = [ "PROMPT_SUBST" ];
+      envExtra = ''
+${prependZshCustom}
+      '';
     
       oh-my-zsh = {
 	enable = true;
 	plugins = ["git"];
-	theme = "robbyrussell";
+	theme = "custom";
       };
     };
 
