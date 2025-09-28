@@ -75,7 +75,7 @@
 	#greetd.tuigreet
 	wl-clipboard
 	#libsForQt5.dolphin
-	tmux
+	#tmux
 	#adwaita-icon-theme
   ];
 
@@ -84,8 +84,10 @@
     gnome.configuration = {
       system.nixos.tags = [ "gnome" ];
       services.xserver.enable = true;
-      services.xserver.displayManager.gdm.enable = true;
-      services.xserver.desktopManager.gnome.enable = true;
+      #services.xserver.displayManager.gdm.enable = true;
+      #services.xserver.desktopManager.gnome.enable = true;
+      services.desktopManager.gnome.enable = true;
+      services.displayManager.gdm.enable = true;
 
       home-manager.users.${username}.imports = [
 	../../home/gnome/default.nix
@@ -132,7 +134,7 @@
 	enable = true;
 	settings = {
 	  default_session = {
-	    command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.hyprland}/bin/Hyprland";
+	    command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.hyprland}/bin/Hyprland";
 	    user = "greeter";
 	  };
 	};
