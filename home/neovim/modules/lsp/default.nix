@@ -5,6 +5,7 @@ let
     lua-language-server
     vim-language-server
     nixd
+    #nil
   ];
 in
 {
@@ -12,7 +13,7 @@ in
   home.packages = lspServers ++ [
     pkgs.stylua
   ];
-
+  
   programs.neovim = {
     plugins = with pkgs.vimPlugins; [
       cmp_luasnip
@@ -176,17 +177,15 @@ local servers = {
       },
     },
   },
-  nixd = {
-    --cmd = {'nixd'}
+  nix = {
+    cmd = {'nixd'},
     filetypes = {'nix'},
-    root_markers = {'.git'},
+    root_markers = {'.git', 'flake.nix'},
   },
   vimls = {
     cmd = {'vim-language-server'},
   },
-  gopls = {
-    cmd = {'gopls'},
-  },
+  gopls = {},
 }
 
 local function lsp_cmd_exists(cmd)
