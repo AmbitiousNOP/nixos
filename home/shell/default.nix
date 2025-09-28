@@ -35,6 +35,9 @@ in
   #  ${prependZshCustom}
   #'';
   programs = {
+    fastfetch = {
+      enable = true;
+    };
     zsh = {
       enable = true;
       enableCompletion = true;
@@ -43,6 +46,7 @@ in
       #setOptions = [ "PROMPT_SUBST" ];
       envExtra = ''
 ${prependZshCustom}
+fastfetch
       '';
     
       oh-my-zsh = {
