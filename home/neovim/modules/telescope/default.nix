@@ -12,9 +12,11 @@
 			telescope-live-grep-args-nvim
 			telescope-file-browser-nvim
 			plenary-nvim
+			fidget-nvim
 		];
 		extraLuaConfig = lib.mkAfter ''
-require("telescope").setup {
+local tele = require('telescope')
+tele.setup {
 defaults = {
   vimgrep_arguments = {
     "${pkgs.ripgrep}/bin/rg",
@@ -34,6 +36,11 @@ defaults = {
     },
   },
   }
+
+tele.load_extension('fidget')
+vim.keymap.set('n', '<leader>nf', function() 
+  tele.extensions.fidget.fidget() 
+end, { desc = '[N]otifications for [F]idget' }) 
 
 local builtin = require 'telescope.builtin'
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
