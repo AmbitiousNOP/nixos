@@ -1,7 +1,8 @@
-{ pkgs
-, config
-, lib
-, ...
+{
+  pkgs,
+  config,
+  lib,
+  ...
 }:
 
 {
@@ -11,9 +12,9 @@
     ];
 
     extraLuaConfig = lib.mkAfter ''
-require('lualine').setup({
-  options = { theme = 'auto' },
-})
+      require('lualine').setup({
+        options = { theme = 'auto' },
+      })
     '';
   };
 
