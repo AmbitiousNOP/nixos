@@ -25,6 +25,9 @@
           packages = with pkgs; [
             # go (version is specified by overlay)
             go
+	    
+	    # go lsp 
+	    gopls 
 
             # goimports, godoc, etc.
             gotools
@@ -32,6 +35,10 @@
             # https://github.com/golangci/golangci-lint
             golangci-lint
           ];
+
+	  shellHook = ''
+	      exec $(which zsh)  
+	    '';
         };
       });
     };
