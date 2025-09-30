@@ -1,4 +1,5 @@
-{username, lib,...}: {
+{ username, lib, ... }:
+{
   home = {
     inherit username;
     homeDirectory = lib.mkForce "/home/${username}";
@@ -7,4 +8,3 @@
 
   programs.home-manager.enable = true;
 }
-
