@@ -17,33 +17,32 @@
       "nvidia-persistenced"
       "cuda-merged"
       "cuda_cuobjdump"
-      "cuda_cuobjdump"
+      "cuda_sanitizer_api"
+      "libnvjitlink"
       "cuda_gdb"
       "cuda_nvcc"
       "cuda_nvdisasm"
       "cuda_nvprune"
-      "cuda_cccl"
-      "cuda_cudart"
-      "cuda_cupti"
-      "cuda_cuxxfilt"
-      "cuda_nvml_dev"
-      "cuda_nvrtc"
-      "cuda_nvtx"
       "cuda_profiler_api"
-      "cuda_sanitizer_api"
+      "cuda_cccl"
+      "cuda_cupti"
+      "cuda_cudart"
+      "cuda_nvtx"
+      "cuda_nvrtc"
+      "cuda_nvml_dev"
+      "cuda_cuxxfilt"
       "libcublas"
-      "libnvjitlink"
       "libcufft"
       "libcurand"
       "libcusolver"
       "libcusparse"
       "libnpp"
-      "obsidian"
-      "discord"
       "steam"
       "steam-original"
       "steam-unwrapped"
       "steam-run"
+      "obsidian"
+      "discord"
     ];
 
   # Enable exerpimental features globally
@@ -106,6 +105,7 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "video"
     ];
     shell = pkgs.zsh;
   };
@@ -140,6 +140,26 @@
       #services.xserver.desktopManager.gnome.enable = true;
       services.desktopManager.gnome.enable = true;
       services.displayManager.gdm.enable = true;
+
+      services.xserver.videoDrivers = [ "nvidia" ];
+      hardware.graphics = {
+        enable = true;
+        enable32Bit = true;
+      };
+
+      hardware.graphics.extraPackages = with pkgs; [
+        vulkan-loader
+        vulkan-validation-layers
+        vulkan-extension-layer
+      ];
+
+      hardware.nvidia = {
+        open = false;
+        modesetting.enable = true;
+        powerManagement.enable = true;
+        nvidiaSettings = true;
+        package = config.boot.kernelPackages.nvidiaPackages.production;
+      };
 
       home-manager.users.${username}.imports = [
         ../../home/gnome/default.nix
