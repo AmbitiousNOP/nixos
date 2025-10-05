@@ -12,8 +12,8 @@
   imports = [
     ../.
     ./hardware-configuration.nix
-    ../../common/pc/ssd
     ../../common/system.nix
+    ../../common/pc/ssd
   ];
 
   # Force use of the amdgpu driver for backlight control on kernel versions where the
@@ -21,15 +21,10 @@
   # "vendor" setting, in this case the thinkpad_acpi driver.
   # See https://hansdegoede.livejournal.com/27130.html
   # See https://lore.kernel.org/linux-acpi/20221105145258.12700-1-hdegoede@redhat.com/
-  #boot.kernelParams = lib.mkIf (lib.versionOlder config.boot.kernelPackages.kernel.version "6.2") [
-  #  "acpi_backlight=native"
-  #];
-  boot.kernelParams = [ "i915.force_probe=7d55" ];
+  boot.kernelParams = lib.mkIf (lib.versionOlder config.boot.kernelPackages.kernel.version "6.2") [
+    "acpi_backlight=native"
+  ];
 
-  # Bootloader
   # see https://github.com/NixOS/nixpkgs/issues/69289
   boot.kernelPackages = lib.mkIf (lib.versionOlder pkgs.linux.version "5.2") pkgs.linuxPackages_latest;
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
 }

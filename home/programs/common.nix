@@ -1,4 +1,9 @@
-{lib, pkgs, ...}:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 {
   home.packages = with pkgs; [
     # archives
@@ -20,14 +25,12 @@
     google-cloud-sdk
 
     # streaming
-    obs-studio
+    #obs-studio
 
     # apps
     anki-bin
     #zed-editor
     #helix
   ];
-
-
 
 }

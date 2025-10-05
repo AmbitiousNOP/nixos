@@ -1,27 +1,71 @@
-{config, pkgs, lib, username, hostname, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  username,
+  hostname,
+  ...
+}:
 
 {
-  # Enable a specific unfree software to be installed 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "nvidia-x11"
-    "nvidia-settings"
-    "nvidia-persistenced"
-    "obsidian"
-  ];
+  # Enable a specific unfree software to be installed
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "nvidia-x11"
+      "nvidia-settings"
+      "nvidia-persistenced"
+      "cuda-merged"
+      "cuda_cuobjdump"
+      "cuda_cuobjdump"
+      "cuda_gdb"
+      "cuda_nvcc"
+      "cuda_nvdisasm"
+      "cuda_nvprune"
+      "cuda_cccl"
+      "cuda_cudart"
+      "cuda_cupti"
+      "cuda_cuxxfilt"
+      "cuda_nvml_dev"
+      "cuda_nvrtc"
+      "cuda_nvtx"
+      "cuda_profiler_api"
+      "cuda_sanitizer_api"
+      "libcublas"
+      "libnvjitlink"
+      "libcufft"
+      "libcurand"
+      "libcusolver"
+      "libcusparse"
+      "libnpp"
+      "obsidian"
+      "discord"
+      "steam"
+      "steam-original"
+      "steam-unwrapped"
+      "steam-run"
+    ];
 
   # Enable exerpimental features globally
-  nix.settings.experimental-features = ["nix-command" "flakes"];  
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   services.udev.enable = true;
   services.udev.packages = [ pkgs.zsa-udev-rules ];
 
-  networking.hostName = hostname;   
+  networking.hostName = hostname;
   networking.networkmanager.enable = true;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.enable = lib.mkForce false;
 
   # Set your time zone.
   time.timeZone = "America/New_York";
@@ -59,27 +103,35 @@
   users.users.${username} = {
     isNormalUser = true;
     description = username;
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     shell = pkgs.zsh;
   };
 
-  nix.settings.trusted-users = [username];
+  nix.settings.trusted-users = [ username ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-	git
-	zsh
-  	vim 
-  	wget
-	#greetd.tuigreet
-	wl-clipboard
-	#libsForQt5.dolphin
-	#tmux
-	#adwaita-icon-theme
+    git
+    zsh
+    vim
+    wget
+    #greetd.tuigreet
+    wl-clipboard
+    #libsForQt5.dolphin
+    #tmux
+    #adwaita-icon-theme
+    btop
+    nvtopPackages.full
   ];
 
-  
+  programs.steam = {
+    enable = true;
+  };
+
   specialisation = {
     gnome.configuration = {
       system.nixos.tags = [ "gnome" ];
@@ -90,26 +142,26 @@
       services.displayManager.gdm.enable = true;
 
       home-manager.users.${username}.imports = [
-	../../home/gnome/default.nix
+        ../../home/gnome/default.nix
       ];
 
-      environment.gnome.excludePackages = with pkgs; [	
-	gnome-weather
-	gnome-photos
-	gnome-tour
-	gnome-maps
-	gnome-music
-	gnome-connections
-	gnome-characters
-	gnome-contacts
-	gnome-calendar
-	geary
-	epiphany
-	yelp
+      environment.gnome.excludePackages = with pkgs; [
+        gnome-weather
+        gnome-photos
+        gnome-tour
+        gnome-maps
+        gnome-music
+        gnome-connections
+        gnome-characters
+        gnome-contacts
+        gnome-calendar
+        geary
+        epiphany
+        yelp
       ];
       environment.systemPackages = with pkgs; [
-	adwaita-icon-theme
-	gnome-tweaks
+        adwaita-icon-theme
+        gnome-tweaks
       ];
 
     };
@@ -117,31 +169,31 @@
     hyprland.configuration = {
       system.nixos.tags = [ "hyprland" ];
       home-manager.users.${username}.imports = [
-	../../home/hyprland/default.nix
-	../../home/waybar/default.nix
+        ../../home/hyprland/default.nix
+        ../../home/waybar/default.nix
       ];
 
       programs.hyprland = {
-	enable = true;
-	withUWSM = true;
-	# set the flake package
-	#package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+        enable = true;
+        withUWSM = true;
+        # set the flake package
+        #package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
         # make sure to also set the portal package, so that they are in sync
-	#portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+        #portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
 
       };
       services.greetd = {
-	enable = true;
-	settings = {
-	  default_session = {
-	    command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.hyprland}/bin/Hyprland";
-	    user = "greeter";
-	  };
-	};
+        enable = true;
+        settings = {
+          default_session = {
+            command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.hyprland}/bin/Hyprland";
+            user = "greeter";
+          };
+        };
       };
       environment.sessionVariables = {
-	XDG_SESSION_TYPE = "wayland";
-	NIXOS_OZONE_WL = "1";
+        XDG_SESSION_TYPE = "wayland";
+        NIXOS_OZONE_WL = "1";
       };
     };
   };
@@ -149,7 +201,6 @@
   #services.xserver.enable = true;
   #services.xserver.displayManager.gdm.enable = true;
   #services.xserver.desktopManager.gnome.enable = true;
-
 
   system.stateVersion = "25.05";
 }

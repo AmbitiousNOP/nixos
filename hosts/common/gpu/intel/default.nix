@@ -85,6 +85,11 @@
           intel-media-driver
           intel-compute-runtime
           vpl-gpu-rt
+        ]
+        ++ [
+          pkgs.vulkan-loader
+          pkgs.vulkan-validation-layers
+          pkgs.vulkan-extension-layer
         ];
 
       hardware.graphics.extraPackages32 =
