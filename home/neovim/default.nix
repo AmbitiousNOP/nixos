@@ -1,18 +1,23 @@
-{pkgs, config, lib, ...}:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 
 {
-	imports = [
-		./modules/default.nix
-		#./modules/modules.nix
-	];
+  imports = [
+    ./modules/default.nix
+    #./modules/modules.nix
+  ];
 
-	programs.neovim = {
-		enable = true;
-	};
+  programs.neovim = {
+    enable = true;
+  };
 
-	home.packages = with pkgs; [
-		ripgrep
-		fzf
-		fd
-	];
+  home.packages = with pkgs; [
+    ripgrep
+    fzf
+    fd
+  ];
 }

@@ -1,7 +1,8 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   imports = [
     ../../home/core.nix
-    
+
     #../../home/hyprland
     #../../home/waybar
     ../../home/kitty
@@ -14,9 +15,8 @@
     #../../home/gnome
   ];
 
-  programs.git = {
-    userName = "AmbitiousNOP";
-    userEmail = "cjpenn7@icloud.com";
+  programs.git.settings = {
+    user.name = "AmbitiousNOP";
   };
 
 }
