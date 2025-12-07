@@ -112,6 +112,8 @@
 
   nix.settings.trusted-users = [ username ];
 
+  virtualisation.docker.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -126,6 +128,7 @@
     #adwaita-icon-theme
     btop
     nvtopPackages.full
+    docker
   ];
 
   programs.steam = {
