@@ -56,21 +56,19 @@
 
   networking.hostName = hostname;
   networking.networkmanager.enable = true;
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.nameservers = [
-    "1.1.1.1#one.one.one.one"
-    "1.0.0.1#one.one.one.one"
-  ];
-  services.resolved = {
+  networking.networkmanager.dns = "dnsmasq";
+  networking.useDHCP = false;
+  networking.dhcpcd.enable = false;
+  services.dnsmasq = {
     enable = true;
-    dnssec = "true";
-    domains = [ "~." ];
-    fallbackDns = [
-      "1.1.1.1#one.one.one.one"
-      "1.0.0.1#one.one.one.one"
-    ];
-    dnsovertls = "true";
+    settings = {
+      server = [
+        "/internal/192.168.49.2"
+        "1.1.1.1"
+      ];
+    };
   };
+
   services.mullvad-vpn.enable = true;
   services.mullvad-vpn.package = pkgs.mullvad-vpn;
 
