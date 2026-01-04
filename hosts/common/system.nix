@@ -51,23 +51,68 @@
     "flakes"
   ];
 
+  # auto update
+  system.autoUpgrade = {
+    enable = true;
+    randomizedDelaySec = "600";
+    operation = "switch";
+  };
+
+  # clean old deployments
+  nix.optimise.automatic = true;
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "--delete-older-than 7d";
+  };
+
+  security.sudo.execWheelOnly = true;
+  security.auditd.enable = true;
+  security.audit.enable = true;
+  security.protectKernelImage = true;
+
+  security.audit.rules = [
+    "-a exit,always -F arch=b64 -S execve"
+  ];
+
+  services.openssh = {
+    passwordAuthentication = false;
+    allowSFTP = false;
+    challengeResponseAuthentication = false;
+    extraConfig = ''
+      			AllowTcpForwarding yes
+      			X11Forwarding no 
+      			AllowAgentForwarding no 
+      			AllowStreamLocalForwarding no 
+      			AuthenticationMethods publickey
+      		'';
+  };
+
   services.udev.enable = true;
   services.udev.packages = [ pkgs.zsa-udev-rules ];
 
   networking.hostName = hostname;
+  networking.firewall.enable = true;
   networking.networkmanager.enable = true;
-  networking.networkmanager.dns = "dnsmasq";
+  #networking.networkmanager.dns = "dnsmasq";
+  networking.networkmanager.dns = "systemd-resolved";
+  services.resolved.enable = true;
+
+  networking.networkmanager = {
+    ethernet.macAddress = "stable";
+    wifi.macAddress = "random";
+  };
   networking.useDHCP = false;
   networking.dhcpcd.enable = false;
-  services.dnsmasq = {
-    enable = true;
-    settings = {
-      server = [
-        "/internal/192.168.49.2"
-        "1.1.1.1"
-      ];
-    };
-  };
+  #services.dnsmasq = {
+  #enable = true;
+  #settings = {
+  #  server = [
+  #    "/internal/192.168.49.2"
+  #    "1.1.1.1"
+  #  ];
+  #};
+  #};
 
   services.mullvad-vpn.enable = true;
   services.mullvad-vpn.package = pkgs.mullvad-vpn;
@@ -80,7 +125,24 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = lib.mkForce false;
 
-  # Set your time zone.
+  boot.kernel.sysctl."net.ipv4.conf.all.log_martians" = true;
+  boot.kernel.sysctl."net.ipv4.conf.all.rp_filter" = "1";
+  boot.kernel.sysctl."net.ipv4.conf.default.log_martians" = true;
+  boot.kernel.sysctl."net.ipv4.conf.default.rp_filter" = "1";
+
+  boot.kernel.sysctl."net.ipv4.icmp_echo_ignore_broadcasts" = true;
+
+  boot.kernel.sysctl."net.ipv4.conf.all.accept_redirects" = false;
+  boot.kernel.sysctl."net.ipv4.conf.all.secure_redirects" = false;
+  boot.kernel.sysctl."net.ipv4.conf.default.accept_redirects" = false;
+  boot.kernel.sysctl."net.ipv4.conf.default.secure_redirects" = false;
+  boot.kernel.sysctl."net.ipv6.conf.all.accept_redirects" = false;
+  boot.kernel.sysctl."net.ipv6.conf.default.accept_redirects" = false;
+
+  boot.kernel.sysctl."net.ipv4.conf.all.send_redirects" = false;
+  boot.kernel.sysctl."net.ipv4.conf.default.send_redirects" = false;
+
+  # Set time zone.
   time.timeZone = "America/New_York";
 
   # Select internationalisation properties.
@@ -126,7 +188,7 @@
   };
 
   nix.settings.trusted-users = [ username ];
-
+  nix.settings.allowed-users = [ "@wheel" ];
   virtualisation.docker.enable = true;
 
   # List packages installed in system profile. To search, run:
@@ -154,10 +216,26 @@
     gnome.configuration = {
       system.nixos.tags = [ "gnome" ];
       services.xserver.enable = true;
-      #services.xserver.displayManager.gdm.enable = true;
-      #services.xserver.desktopManager.gnome.enable = true;
       services.desktopManager.gnome.enable = true;
       services.displayManager.gdm.enable = true;
+
+      services.xrdp.enable = true;
+      services.xserver.desktopManager.xfce.enable = true;
+      services.gnome.gnome-remote-desktop.enable = true;
+
+      #systemd.services.gnome-remote-desktop = {
+      #wantedBy = [ "graphical.target" ];
+      #};
+      networking.firewall.interfaces.enp0s31f6.allowedTCPPorts = [ 3389 ];
+      networking.firewall.allowedTCPPorts = [ ];
+
+      services.displayManager.autoLogin.enable = false;
+      services.getty.autologinUser = null;
+
+      systemd.targets.sleep.enable = false;
+      systemd.targets.suspend.enable = false;
+      systemd.targets.hibernate.enable = false;
+      systemd.targets.hybrid-sleep.enable = false;
 
       services.xserver.videoDrivers = [ "nvidia" ];
       hardware.graphics = {
