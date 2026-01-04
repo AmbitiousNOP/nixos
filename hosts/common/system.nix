@@ -89,7 +89,35 @@
   };
 
   services.udev.enable = true;
-  services.udev.packages = [ pkgs.zsa-udev-rules ];
+  services.udev.packages = [
+    pkgs.zsa-udev-rules
+    pkgs.yubikey-personalization
+  ];
+  services.udev.extraRules = ''
+    	ACTION=="remove",\
+        	ENV{ID_BUS}=="usb",\
+            ENV{ID_MODEL_ID}=="0407",\
+            ENV{ID_VENDOR_ID}=="1050",\
+            ENV{ID_VENDOR}=="Yubico",\
+            RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
+  '';
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+  security.pam.u2f = {
+    enable = true;
+    control = "required";
+    settings = {
+      interactive = true;
+      cue = true;
+    };
+  };
+  security.pam.services = {
+    login.u2fAuth = true;
+    sudo.u2fAuth = true;
+    xrdp-sesman.u2fAuth = true;
+  };
 
   networking.hostName = hostname;
   networking.firewall.enable = true;
@@ -191,6 +219,18 @@
   nix.settings.allowed-users = [ "@wheel" ];
   virtualisation.docker.enable = true;
 
+  users.users.remote = {
+    isNormalUser = true;
+    description = "Remote user";
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "video"
+      "docker"
+    ];
+    shell = pkgs.zsh;
+  };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -220,6 +260,7 @@
       services.displayManager.gdm.enable = true;
 
       services.xrdp.enable = true;
+      services.xrdp.defaultWindowManager = "xfce4-session";
       services.xserver.desktopManager.xfce.enable = true;
       services.gnome.gnome-remote-desktop.enable = true;
 
@@ -278,6 +319,9 @@
       environment.systemPackages = with pkgs; [
         adwaita-icon-theme
         gnome-tweaks
+        xfce.xfce4-session
+        xfce.xfce4-panel
+        xfce.xfce4-terminal
       ];
 
     };

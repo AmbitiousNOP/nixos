@@ -1,5 +1,6 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
+  home.username = "user";
   imports = [
     ../../home/core.nix
 

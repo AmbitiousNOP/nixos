@@ -1,7 +1,14 @@
-{ username, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  username = config.home.username;
+in
 {
   home = {
-    inherit username;
     homeDirectory = lib.mkForce "/home/${username}";
     stateVersion = "25.05";
   };

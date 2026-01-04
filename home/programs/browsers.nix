@@ -1,9 +1,11 @@
 {
   pkgs,
   config,
-  username,
   ...
 }:
+let
+  username = config.home.username;
+in
 {
   programs = {
     firefox = {

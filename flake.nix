@@ -51,6 +51,7 @@
                 home-manager.backupFileExtension = "backup";
                 home-manager.extraSpecialArgs = inputs // specialArgs;
                 home-manager.users.${username} = import ./users/${username}/home.nix;
+                home-manager.users.remote = import ./users/remote/home.nix;
               }
             ];
           };

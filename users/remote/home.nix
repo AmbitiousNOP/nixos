@@ -1,5 +1,6 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
+  home.username = "remote";
   imports = [
     ../../home/core.nix
 
