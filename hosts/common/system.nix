@@ -76,16 +76,21 @@
   ];
 
   services.openssh = {
-    passwordAuthentication = false;
+    enable = true;
+    ports = [ 9876 ];
     allowSFTP = false;
-    challengeResponseAuthentication = false;
-    extraConfig = ''
-      			AllowTcpForwarding yes
-      			X11Forwarding no 
-      			AllowAgentForwarding no 
-      			AllowStreamLocalForwarding no 
-      			AuthenticationMethods publickey
-      		'';
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = true;
+      ChallengeResponseAuthentication = true;
+      PermitRootLogin = "no";
+      AllowUsers = [ "remote" ];
+      AllowTcpForwarding = "yes";
+      X11Forwarding = false;
+      AllowAgentForwarding = false;
+      AllowStreamLocalForwarding = false;
+      AuthenticationMethods = "publickey,keyboard-interactive:pam";
+    };
   };
 
   services.udev.enable = true;
@@ -94,12 +99,17 @@
     pkgs.yubikey-personalization
   ];
   services.udev.extraRules = ''
-    	ACTION=="remove",\
-        	ENV{ID_BUS}=="usb",\
-            ENV{ID_MODEL_ID}=="0407",\
-            ENV{ID_VENDOR_ID}=="1050",\
-            ENV{ID_VENDOR}=="Yubico",\
-            RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
+        	ACTION=="remove",\
+            	ENV{ID_BUS}=="usb",\
+                ENV{ID_MODEL_ID}=="0407",\
+                ENV{ID_VENDOR_ID}=="1050",\
+                ENV{ID_VENDOR}=="Yubico",\
+                RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
+    		KERNEL=="hidraw*",\
+    			SUBSYSTEM=="hidraw",\
+    			ENV{ID_VENDOR_ID}=="1050",\
+    			MODE="0660",\
+    			GROUP="plugdev"
   '';
   programs.gnupg.agent = {
     enable = true;
@@ -107,17 +117,21 @@
   };
   security.pam.u2f = {
     enable = true;
-    control = "required";
+    control = "sufficient";
     settings = {
+      authfile = "/etc/u2f/u2f_keys";
       interactive = true;
       cue = true;
+      nouserok = false;
     };
   };
   security.pam.services = {
     login.u2fAuth = true;
     sudo.u2fAuth = true;
     xrdp-sesman.u2fAuth = true;
+    ssdh.u2fAuth = true;
   };
+  services.pcscd.enable = true;
 
   networking.hostName = hostname;
   networking.firewall.enable = true;
@@ -201,6 +215,8 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  users.groups.plugdev = { };
+
   programs.zsh.enable = true;
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${username} = {
@@ -211,6 +227,7 @@
       "wheel"
       "video"
       "docker"
+      "plugdev"
     ];
     shell = pkgs.zsh;
   };
@@ -227,8 +244,13 @@
       "wheel"
       "video"
       "docker"
+      "plugdev"
     ];
     shell = pkgs.zsh;
+    openssh.authorizedKeys.keys = [
+      "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIEtrfBJ+SNmRKx4DxLi5CWVs0f05YSCUS4ZOm68KXI1UAAAAEXNzaDpyZXNpZGVudC1tYWlu ssh-resident-main"
+      "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAILVoizzjIRTu9SOaDwnpZwe6Z8NhlUkkznhOLGt2AUQUAAAAEHNzaDp3aW5kb3dzLW1haW4= ssh-windows-resident"
+    ];
   };
 
   # List packages installed in system profile. To search, run:
@@ -267,7 +289,10 @@
       #systemd.services.gnome-remote-desktop = {
       #wantedBy = [ "graphical.target" ];
       #};
-      networking.firewall.interfaces.enp0s31f6.allowedTCPPorts = [ 3389 ];
+      networking.firewall.interfaces.enp0s31f6.allowedTCPPorts = [
+        3389
+        9876
+      ];
       networking.firewall.allowedTCPPorts = [ ];
 
       services.displayManager.autoLogin.enable = false;

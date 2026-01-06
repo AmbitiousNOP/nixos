@@ -18,6 +18,22 @@
 
   programs.git.settings = {
     user.name = "AmbitiousNOP";
+    user.email = "dev@ambitiousnop.computer";
+    signing = {
+      signByDefault = true;
+      key = "457EA42E44D2D8C0";
+    };
+    extraConfig = {
+      gpg = {
+        program = "${pkgs.gnupg}/bin/gpg";
+        format = "openpgp";
+      };
+      commit = {
+        gpgsign = true;
+      };
+      tag = {
+        gpgsign = true;
+      };
+    };
   };
-
 }

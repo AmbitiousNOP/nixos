@@ -31,6 +31,10 @@
     anki-bin
     #zed-editor
     #helix
+
+    # gpg
+    gnupg
+    yubikey-manager
   ];
 
 }
